@@ -32,7 +32,3 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-### VS Code ###
-.vscode/
-/src/main/java/com/example/grpc_order_client/GrpcOrderClientApplication.java
