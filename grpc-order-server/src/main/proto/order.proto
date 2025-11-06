@@ -1,0 +1,39 @@
+syntax = "proto3";
+package order;
+option java_package = "com.example.grpc_order_server.proto"; // 👈 FIXED package
+option java_multiple_files = true;
+
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrder (GetOrderRequest) returns (GetOrderResponse);
+  rpc TrackOrderStatus (TrackRequest) returns (stream OrderStatusUpdate);
+}
+
+message CreateOrderRequest {
+  string product = 1;
+  int32 quantity = 2;
+  string customer = 3;
+}
+
+message CreateOrderResponse {
+  string orderId = 1;
+  string message = 2;
+}
+
+message GetOrderRequest { string orderId = 1; }
+
+message GetOrderResponse {
+  string orderId = 1;
+  string product = 2;
+  int32 quantity = 3;
+  string customer = 4;
+  string status = 5;
+}
+
+message TrackRequest { string orderId = 1; }
+
+message OrderStatusUpdate {
+  string orderId = 1;
+  string status = 2;
+  int64 timestamp = 3;
+}

@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'application'                     // <-- needed for `application { mainClass = ... }`
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'grpc-order-client'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    grpcVersion  = '1.65.1'
+}
+
+dependencies {
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+
+    compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+}
+
+protobuf {
+    generatedFilesBaseDir = "$projectDir/build/generated"
+
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.3"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/java',
+                    'build/generated/source/proto/main/grpc',
+                    'src/main/java'
+        }
+    }
+}
+
+application {
+    // Use the fully qualified class name of the client main class
+    mainClass = 'com.example.grpc_order_client.OrderClient'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
